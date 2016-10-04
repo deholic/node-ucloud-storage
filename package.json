@@ -1,0 +1,27 @@
+{
+  "name": "node-ucloud-storage",
+  "version": "0.0.1",
+  "description": "Storage wrapper for KT Ucloud",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deholic/node-ucloud-storage.git"
+  },
+  "keywords": [
+    "ucloud",
+    "storage"
+  ],
+  "author": "Eui-Gyom, Kim",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deholic/node-ucloud-storage/issues"
+  },
+  "homepage": "https://github.com/deholic/node-ucloud-storage#readme",
+  "dependencies": {
+    "lodash": "^4.16.3",
+    "restler": "^3.4.0"
+  }
+}
