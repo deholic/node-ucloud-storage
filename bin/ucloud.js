@@ -1,7 +1,7 @@
-const rest = require('restler')
+var rest = require('restler')
     , fs = require('fs')
     , _ = require('lodash');
-const AUTH_URL = 'https://api.ucloudbiz.olleh.com/storage/v1/auth';
+var AUTH_URL = 'https://api.ucloudbiz.olleh.com/storage/v1/auth';
 
 function UcloudStorage(userid, apikey, options) {
     this._authParam = {
