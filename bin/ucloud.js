@@ -1,5 +1,6 @@
 var rest = require('restler')
     , fs = require('fs')
+    , mime = require('mime')
     , _ = require('lodash');
 var AUTH_URL = 'https://api.ucloudbiz.olleh.com/storage/v1/auth';
 
@@ -10,13 +11,12 @@ function UcloudStorage(userid, apikey, options) {
     };
     this.token = '';
     this.tokenExpires = new Date();
-    this.baseUrl = '';
     this.storageUrl = '';
     this.dataType = options && options.dataType ? options.dataType : 'json';
 }
 
 UcloudStorage.prototype = {
-    authentication: function (options) {
+    authentication: function () {
         var _this = this;
 
         return new Promise(function (resolve, reject) {
@@ -25,7 +25,7 @@ UcloudStorage.prototype = {
             }
 
             rest.get(AUTH_URL, {headers: _this._authParam})
-                .on('error', function (err, response) {
+                .on('error', function (err) {
                     reject(new Error('Unable to authentication: ' + err.status));
                 })
                 .on('complete', function (data, response) {
@@ -58,10 +58,10 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.get(completeUrl, {headers: {'X-Auth-Token': _this.token}})
-                    .on('error', function (err, response) {
+                    .on('error', function (err) {
                         reject(err);
                     })
-                    .on('complete', function (result, response) {
+                    .on('complete', function (result) {
                         resolve(result);
                     });
             }
@@ -83,28 +83,30 @@ UcloudStorage.prototype = {
                     return;
                 }
 
-                const completeUrl = _.join([_this.storageUrl, targetStorage, file.filename + '-' + _.escape(file.originalname)], '/');
-                const options = {
+                const pathParts = file.path.split('/');
+                const filename = file.filename || pathParts[pathParts.length - 1];
+                const completeUrl = _.join([_this.storageUrl, targetStorage, filename], '/');
+                var options = {
                     headers: {
                         'X-Auth-Token': _this.token,
-                        'Content-Type': file.mimetype,
-                        'Content-Length': file.size
+                        'Content-Length': data.length,
+                        'Content-Type': file.mimetype || mime.lookup(filename)
                     },
                     data: data
                 };
 
                 rest.put(completeUrl, options)
-                    .on('error', function (err, response) {
+                    .on('error', function (err) {
                         reject(err);
                     })
-                    .on('complete', function (result, response) {
+                    .on('complete', function () {
                         resolve({path: completeUrl});
                     });
             });
         });
     },
 
-    removeObject: function () {
+    removeObject: function (targetStorage, name) {
         var _this = this;
 
         return new Promise(function (resolve, reject) {
@@ -115,10 +117,10 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.delete(completeUrl, {headers: {'X-Auth-Token': _this.token}})
-                    .on('error', function (err, response) {
+                    .on('error', function (err) {
                         reject(err);
                     })
-                    .on('complete', function (result, response) {
+                    .on('complete', function () {
                         resolve();
                     });
             }
