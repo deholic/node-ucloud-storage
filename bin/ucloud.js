@@ -1,3 +1,4 @@
+
 var rest = require('restler')
     , fs = require('fs')
     , mime = require('mime')
@@ -116,7 +117,26 @@ UcloudStorage.prototype = {
             else {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
-                rest.delete(completeUrl, {headers: {'X-Auth-Token': _this.token}})
+                rest.del(completeUrl, {headers: {'X-Auth-Token': _this.token}})
+                    .on('error', function (err) {
+                        reject(err);
+                    })
+                    .on('complete', function () {
+                        resolve();
+                    });
+            }
+        });
+    },
+
+    removeObjectPath: function (path) {
+        var _this = this;
+
+        return new Promise(function (resolve, reject) {
+            if (!_this.token || _this.tokenExpires <= Date.now()) {
+                reject(new Error('Token invalid'));
+            }
+            else {
+                rest.del(path, {headers: {'X-Auth-Token': _this.token}})
                     .on('error', function (err) {
                         reject(err);
                     })
