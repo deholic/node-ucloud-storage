@@ -78,6 +78,11 @@ UcloudStorage.prototype = {
                 return;
             }
 
+            if (!file.path) {
+                reject(new Error('Not found file path'));
+                return;
+            }
+
             fs.readFile(file.path, null, function (err, data) {
                 if (err) {
                     reject(err);
