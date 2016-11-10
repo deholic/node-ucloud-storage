@@ -75,18 +75,15 @@ UcloudStorage.prototype = {
         return new Promise(function (resolve, reject) {
             if (!_this.token || _this.tokenExpires <= Date.now()) {
                 reject(new Error('Token invalid'));
-                return;
             }
 
             if (!file.path) {
                 reject(new Error('Not found file path'));
-                return;
             }
 
             fs.readFile(file.path, null, function (err, data) {
                 if (err) {
                     reject(err);
-                    return;
                 }
 
                 const pathParts = file.path.split('/');
