@@ -100,15 +100,15 @@ UcloudStorage.prototype = {
 
                 rest.put(completeUrl, options)
                     .on('success', function (data, response) {
-                        console.log('>> Success');
+                        // console.log('>> Success');
                         resolve({path: completeUrl});
                     })
                     .on('error', function (err, response) {
-                        console.log('>> Error : ' + err.message);
+                        // console.log('>> Error : ' + err.message);
                         reject(err);
                     })
                     .on('complete', function (result, response) {
-                        console.log(result, response);
+                        if (result instanceof Error) console.log(result.message);
                     });
             });
         });
@@ -125,11 +125,14 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.del(completeUrl, {headers: {'X-Auth-Token': _this.token}})
+                    .on('success', function (data, response) {
+                        resolve();
+                    })
                     .on('error', function (err) {
                         reject(err);
                     })
-                    .on('complete', function () {
-                        resolve();
+                    .on('complete', function (result) {
+                        if (result instanceof Error) console.log(result.message);
                     });
             }
         });
@@ -144,11 +147,14 @@ UcloudStorage.prototype = {
             }
             else {
                 rest.del(path, {headers: {'X-Auth-Token': _this.token}})
+                    .on('success', function (data, response) {
+                        resolve();
+                    })
                     .on('error', function (err) {
                         reject(err);
                     })
-                    .on('complete', function () {
-                        resolve();
+                    .on('complete', function (result) {
+                        if (result instanceof Error) console.log(result.message);
                     });
             }
         });
