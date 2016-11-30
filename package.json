@@ -1,6 +1,6 @@
 {
   "name": "node-ucloud-storage",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Storage wrapper for KT Ucloud",
   "main": "index.js",
   "scripts": {
