@@ -99,11 +99,16 @@ UcloudStorage.prototype = {
                 };
 
                 rest.put(completeUrl, options)
-                    .on('error', function (err) {
+                    .on('success', function (data, response) {
+                        console.log('>> Success');
+                        resolve({path: completeUrl});
+                    })
+                    .on('error', function (err, response) {
+                        console.log('>> Error : ' + err.message);
                         reject(err);
                     })
-                    .on('complete', function () {
-                        resolve({path: completeUrl});
+                    .on('complete', function (result, response) {
+                        console.log(result, response);
                     });
             });
         });
