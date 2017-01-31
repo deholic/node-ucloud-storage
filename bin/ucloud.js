@@ -56,7 +56,7 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.get(completeUrl, {headers: {'X-Auth-Token': _this.token}})
-                    .on('complete', function (result, response) {
+                    .on('complete', function (result) {
                         if (result instanceof Error) {
                             reject(err);
                         }
@@ -98,7 +98,7 @@ UcloudStorage.prototype = {
                 };
 
                 rest.put(completeUrl, options)
-                    .on('complete', function (result, response) {
+                    .on('complete', function (result) {
                         if (result instanceof Error) {
                             console.log(result.message);
                             reject(err);
@@ -145,7 +145,7 @@ UcloudStorage.prototype = {
             }
             else {
                 rest.del(path, {headers: {'X-Auth-Token': _this.token}})
-                    .on('complete', function (result, response) {
+                    .on('complete', function (result) {
                         if (result instanceof Error) {
                             console.log(result.message);
                             reject(result);
