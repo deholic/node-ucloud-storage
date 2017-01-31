@@ -26,10 +26,7 @@ UcloudStorage.prototype = {
             }
 
             rest.get(AUTH_URL, {headers: _this._authParam})
-                .on('error', function (err) {
-                    reject(new Error('Unable to authentication: ' + err.status));
-                })
-                .on('complete', function (data, response) {
+                .on('complete', function (result, response) {
                     if (response.headers['x-auth-token']) {
                         var serverTime = new Date(response.headers['date']);
                         var serverTimeSeconds = serverTime.getTime();
@@ -42,7 +39,7 @@ UcloudStorage.prototype = {
                         resolve();
                     }
                     else {
-                        reject(new Error('Unable to authentication'));
+                        reject(result instanceof Error ? result : new Error('Unable to authentication'));
                     }
                 });
         });
@@ -59,11 +56,13 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.get(completeUrl, {headers: {'X-Auth-Token': _this.token}})
-                    .on('error', function (err) {
-                        reject(err);
-                    })
-                    .on('complete', function (result) {
-                        resolve(result);
+                    .on('complete', function (result, response) {
+                        if (result instanceof Error) {
+                            reject(err);
+                        }
+                        else {
+                            resolve(result);
+                        }
                     });
             }
         });
@@ -99,16 +98,15 @@ UcloudStorage.prototype = {
                 };
 
                 rest.put(completeUrl, options)
-                    .on('success', function (data, response) {
-                        // console.log('>> Success');
-                        resolve({path: completeUrl});
-                    })
-                    .on('error', function (err, response) {
-                        // console.log('>> Error : ' + err.message);
-                        reject(err);
-                    })
                     .on('complete', function (result, response) {
-                        if (result instanceof Error) console.log(result.message);
+                        if (result instanceof Error) {
+                            console.log(result.message);
+                            reject(err);
+                        }
+                        else {
+                            console.log(result);
+                            resolve({path: completeUrl});
+                        }
                     });
             });
         });
@@ -125,14 +123,14 @@ UcloudStorage.prototype = {
                 const completeUrl = _.join([_this.storageUrl, targetStorage, _.escape(name)], '/');
 
                 rest.del(completeUrl, {headers: {'X-Auth-Token': _this.token}})
-                    .on('success', function (data, response) {
-                        resolve();
-                    })
-                    .on('error', function (err) {
-                        reject(err);
-                    })
                     .on('complete', function (result) {
-                        if (result instanceof Error) console.log(result.message);
+                        if (result instanceof Error) {
+                            console.log(result.message);
+                            reject(result);
+                        }
+                        else {
+                            resolve();
+                        }
                     });
             }
         });
@@ -147,14 +145,14 @@ UcloudStorage.prototype = {
             }
             else {
                 rest.del(path, {headers: {'X-Auth-Token': _this.token}})
-                    .on('success', function (data, response) {
-                        resolve();
-                    })
-                    .on('error', function (err) {
-                        reject(err);
-                    })
-                    .on('complete', function (result) {
-                        if (result instanceof Error) console.log(result.message);
+                    .on('complete', function (result, response) {
+                        if (result instanceof Error) {
+                            console.log(result.message);
+                            reject(result);
+                        }
+                        else {
+                            resolve();
+                        }
                     });
             }
         });
